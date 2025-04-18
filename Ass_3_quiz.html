@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .question {
+            display: none;
+        }
+        .active {
+            display: block;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        li:hover {
+            background-color: #f0f0f0;
+        }
+        .selected {
+            background-color: #007bff;
+            color: white;
+        }
+        .correct {
+            background-color: green !important;
+            color: white;
+        }
+        .wrong {
+            background-color: red !important;
+            color: white;
+        }
+        .btn-container {
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            cursor: pointer;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="question active">
+        <h1>Question 1/5</h1>
+        <h4>What is the capital of France?</h4>
+        <ul>
+            <li onclick="selectAnswer(0, this)">London</li>
+            <li onclick="selectAnswer(0, this)">Paris</li>
+            <li onclick="selectAnswer(0, this)">Berlin</li>
+            <li onclick="selectAnswer(0, this)">Madrid</li>
+        </ul>
+        <div class="btn-container">
+            <button disabled onclick="prevQuestion()">Previous</button>
+            <button onclick="nextQuestion()">Next</button>
+        </div>
+    </div>
+
+    <div class="question">
+        <h1>Question 2/5</h1>
+        <h4>What is 2 + 2?</h4>
+        <ul>
+            <li onclick="selectAnswer(1, this)">3</li>
+            <li onclick="selectAnswer(1, this)">4</li>
+            <li onclick="selectAnswer(1, this)">5</li>
+            <li onclick="selectAnswer(1, this)">6</li>
+        </ul>
+        <div class="btn-container">
+            <button onclick="prevQuestion()">Previous</button>
+            <button onclick="nextQuestion()">Next</button>
+        </div>
+    </div>
+
+    <div class="question">
+        <h1>Question 3/5</h1>
+        <h4>Which is the largest ocean?</h4>
+        <ul>
+            <li onclick="selectAnswer(2, this)">Atlantic</li>
+            <li onclick="selectAnswer(2, this)">Indian</li>
+            <li onclick="selectAnswer(2, this)">Pacific</li>
+            <li onclick="selectAnswer(2, this)">Arctic</li>
+        </ul>
+        <div class="btn-container">
+            <button onclick="prevQuestion()">Previous</button>
+            <button onclick="nextQuestion()">Next</button>
+        </div>
+    </div>
+
+    <div class="question">
+        <h1>Question 4/5</h1>
+        <h4>Who invented the telephone?</h4>
+        <ul>
+            <li onclick="selectAnswer(3, this)">Albert Einstein</li>
+            <li onclick="selectAnswer(3, this)">Isaac Newton</li>
+            <li onclick="selectAnswer(3, this)">Alexander Graham Bell</li>
+            <li onclick="selectAnswer(3, this)">Thomas Edison</li>
+        </ul>
+        <div class="btn-container">
+            <button onclick="prevQuestion()">Previous</button>
+            <button onclick="nextQuestion()">Next</button>
+        </div>
+    </div>
+
+    <div class="question">
+        <h1>Question 5/5</h1>
+        <h4>What is the chemical symbol for water?</h4>
+        <ul>
+            <li onclick="selectAnswer(4, this)">O2</li>
+            <li onclick="selectAnswer(4, this)">CO2</li>
+            <li onclick="selectAnswer(4, this)">H2O</li>
+            <li onclick="selectAnswer(4, this)">NaCl</li>
+        </ul>
+        <div class="btn-container">
+            <button onclick="prevQuestion()">Previous</button>
+            <button onclick="submitQuiz()">Submit</button>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 0;
+        const questions = document.querySelectorAll(".question");
+        let selectedAnswers = new Array(questions.length).fill(null);
+
+        // Correct answers
+        const correctAnswers = [
+            "Paris",   // Q1
+            "4",       // Q2
+            "Pacific", // Q3
+            "Alexander Graham Bell", // Q4
+            "H2O"      // Q5
+        ];
+
+        function showQuestion(index) {
+            questions.forEach((q, i) => {
+                q.classList.toggle("active", i === index);
+            });
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                showQuestion(currentQuestion);
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion(currentQuestion);
+            }
+        }
+
+        function selectAnswer(questionIndex, selectedOption) {
+            selectedAnswers[questionIndex] = selectedOption.innerText;
+
+            // Remove 'selected' class from all options in the current question
+            let options = questions[questionIndex].querySelectorAll("li");
+            options.forEach(option => option.classList.remove("selected"));
+
+            // Highlight the selected option
+            selectedOption.classList.add("selected");
+        }
+
+        function submitQuiz() {
+            if (selectedAnswers.includes(null)) {
+                alert("Please answer all questions before submitting.");
+                return;
+            }
+
+            let score = 0;
+
+            selectedAnswers.forEach((answer, index) => {
+                let options = questions[index].querySelectorAll("li");
+                options.forEach(option => {
+                    if (option.innerText === correctAnswers[index]) {
+                        option.classList.add("correct");
+                    }
+                    if (option.innerText === selectedAnswers[index] && option.innerText !== correctAnswers[index]) {
+                        option.classList.add("wrong");
+                    }
+                });
+
+                if (answer === correctAnswers[index]) {
+                    score++;
+                }
+            });
+
+            alert(`You got ${score} out of ${questions.length} correct!`);
+        }
+    </script>
+</body>
+</html>
